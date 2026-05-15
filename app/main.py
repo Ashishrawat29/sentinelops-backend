@@ -22,8 +22,6 @@ from app.routes.equipment_routes import (
     router as equipment_router
 )
 
-Base.metadata.create_all(bind=engine)
-
 app = FastAPI()
 
 app.include_router(
