@@ -1,10 +1,10 @@
 from app.schemas.prediction_schema import (
-    PredictionRequest,
+    PredictionInput,
 )
 
 
 def predict_failure(
-    data: PredictionRequest,
+    data: PredictionInput,
 ):
 
     risk_score = 0
@@ -89,7 +89,43 @@ def predict_failure(
             "Pressure slightly above optimal."
         )
 
-    # RISK LEVEL
+    # VOLTAGE ANALYSIS
+
+    if data.voltage >= 250:
+
+        risk_score += 20
+
+        recommendations.append(
+            "Voltage instability detected."
+        )
+
+    elif data.voltage >= 230:
+
+        risk_score += 10
+
+        recommendations.append(
+            "Voltage fluctuation observed."
+        )
+
+    # RUNTIME ANALYSIS
+
+    if data.runtime_hours >= 1000:
+
+        risk_score += 20
+
+        recommendations.append(
+            "Equipment runtime exceeded safe threshold."
+        )
+
+    elif data.runtime_hours >= 700:
+
+        risk_score += 10
+
+        recommendations.append(
+            "High operational runtime detected."
+        )
+
+    # FINAL RISK LEVEL
 
     if risk_score >= 80:
 
@@ -121,6 +157,12 @@ def predict_failure(
 
         "prediction":
             risk_level,
+
+        "risk_level":
+            risk_level,
+
+        "risk_score":
+            risk_score,
 
         "failure_probability":
             failure_probability,
