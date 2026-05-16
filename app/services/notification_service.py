@@ -21,7 +21,9 @@ if not firebase_admin._apps:
         cred
     )
 
-db = firestore.Client()
+db = firestore.Client.from_service_account_json(
+    "firebase/serviceAccountKey.json"
+)
 
 
 def send_push_notification(
