@@ -1,3 +1,5 @@
+import threading
+
 import firebase_admin
 
 from firebase_admin import (
@@ -25,24 +27,39 @@ def send_push_notification(
     body: str,
 ):
 
-    message = messaging.Message(
+    def send():
 
-        notification=
-        messaging.Notification(
+        try:
 
-            title=title,
+            message = messaging.Message(
 
-            body=body,
-        ),
+                notification=
+                messaging.Notification(
 
-        topic="sentinelops_alerts",
-    )
+                    title=title,
 
-    response = messaging.send(
-        message
-    )
+                    body=body,
+                ),
 
-    print(
-        "Notification sent:",
-        response
-    )
+                topic="sentinelops_alerts",
+            )
+
+            response = messaging.send(
+                message
+            )
+
+            print(
+                "Notification sent successfully:",
+                response
+            )
+
+        except Exception as e:
+
+            print(
+                "FCM ERROR:",
+                str(e),
+            )
+
+    threading.Thread(
+        target=send
+    ).start()

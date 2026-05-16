@@ -544,8 +544,19 @@ async def websocket_endpoint(
                 status,
         }
 
-        await websocket.send_json(
-            data
-        )
+        try:
+
+            await websocket.send_json(
+                    data
+                )
+
+        except Exception as e:
+
+            print(
+        "WebSocket send error:",
+        str(e)
+            )
+
+            break
 
         await asyncio.sleep(2)
