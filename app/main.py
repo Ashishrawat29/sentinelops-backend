@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-
+from app.database import Base, engine
 from fastapi.middleware.cors import CORSMiddleware
 from app.models.user import User
 from app.models.equipment import Equipment
@@ -21,6 +21,8 @@ from app.routes.auth_routes import router
 from app.routes.equipment_routes import (
     router as equipment_router
 )
+
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
