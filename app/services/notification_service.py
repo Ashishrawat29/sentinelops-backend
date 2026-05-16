@@ -7,6 +7,8 @@ from firebase_admin import (
     messaging,
 )
 
+from google.cloud import firestore
+
 # INITIALIZE FIREBASE
 
 if not firebase_admin._apps:
@@ -18,6 +20,8 @@ if not firebase_admin._apps:
     firebase_admin.initialize_app(
         cred
     )
+
+db = firestore.Client()
 
 
 def send_push_notification(
@@ -31,27 +35,52 @@ def send_push_notification(
 
         try:
 
-            message = messaging.Message(
+            tokens_ref = db.collection(
+                "device_tokens"
+            ).stream()
 
-                notification=
-                messaging.Notification(
+            for token_doc in tokens_ref:
 
-                    title=title,
+                token_data = token_doc.to_dict()
 
-                    body=body,
-                ),
+                token = token_data.get(
+                    "token"
+                )
 
-                topic="sentinelops_alerts",
-            )
+                if not token:
 
-            response = messaging.send(
-                message
-            )
+                    continue
 
-            print(
-                "Notification sent successfully:",
-                response
-            )
+                try:
+
+                    message = messaging.Message(
+
+                        notification=
+                        messaging.Notification(
+
+                            title=title,
+
+                            body=body,
+                        ),
+
+                        token=token,
+                    )
+
+                    response = messaging.send(
+                        message
+                    )
+
+                    print(
+                        "Notification sent:",
+                        response
+                    )
+
+                except Exception as token_error:
+
+                    print(
+                        "Token send error:",
+                        str(token_error),
+                    )
 
         except Exception as e:
 
