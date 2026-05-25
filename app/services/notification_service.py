@@ -5,6 +5,7 @@ import firebase_admin
 from firebase_admin import (
     credentials,
     messaging,
+    exceptions as fb_exceptions,
 )
 
 from google.cloud import firestore
@@ -76,6 +77,28 @@ def send_push_notification(
                         "Notification sent:",
                         response
                     )
+
+                except (
+                    messaging.UnregisteredError,
+                    fb_exceptions.NotFoundError,
+                ):
+
+                    # Stale token — remove from Firestore so we stop retrying it.
+                    try:
+
+                        token_doc.reference.delete()
+
+                        print(
+                            "Removed stale token:",
+                            token_doc.id,
+                        )
+
+                    except Exception as delete_error:
+
+                        print(
+                            "Failed to remove stale token:",
+                            str(delete_error),
+                        )
 
                 except Exception as token_error:
 

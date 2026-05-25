@@ -99,15 +99,6 @@ async def websocket_endpoint(
 ):
 
     await websocket.accept()
-    
-    print("TEST NOTIFICATION TRIGGERED")
-
-    send_push_notification(
-
-    title="SENTINELOPS TEST",
-
-    body="Push notification working",
-)
 
     health = 100
 
